@@ -87,6 +87,7 @@ namespace HillCipher.Controllers
         //////////////////////////////////////////////////////
         private static int Minor(int[,] a,int i, int j)
         {
+        
             int n = (int)Math.Sqrt(a.Length);
             int m = n - 1;
             int[,] res = new int[m,m];
