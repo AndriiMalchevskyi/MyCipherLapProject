@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewBag.Title = "XORCipher";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <form class="form-horizontal" role="form" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-6 text-center">
+                        <h2>XOR Cipher</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <textarea id="text" rows="3" class="form-control container-fluid" placeholder="Text"></textarea>
+                    </div>
+                    <div class="col-lg-3">
+                        <textarea id="result" readonly rows="3" class="form-control" placeholder="Decrypt text"></textarea>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-6">
+                        <input id="keyWord" type="text" class="form-control container-fluid" placeholder="Key" />
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-3">
+                        <input type='button' class="btn btn-warning form-control" id="encrypt" value='Encrypt' />
+                    </div>
+                    <div class="col-lg-3">
+                        <input type='button' class="btn btn-success form-control" id="decrypt" value='Decrypt' />
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-6 text-center">
+                        <h4>Work with file</h4>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-6">
+                        <input type="file" class="form-control container-fluid" name="file" id="file">
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-3">
+                        <input type="button" id="send_en_file" value="Send&Encrypt" class="btn btn-warning form-control">
+                    </div>
+                    <div class="col-lg-3">
+                        <input type="button" id="send_de_file" value="Send&Decrypt" class="btn btn-success form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+</form>
+
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#encrypt').click(function (e) {
+            e.preventDefault();
+            var text = $('#text').val();
+            var keyWord = $('#keyWord').val();
+            if (keyWord.length!=3) {
+                alert('Input correct key, length not correct: ' + keyWord.length);
+            }
+            else {
+                text = encodeURIComponent(text);
+                keyWord = encodeURIComponent(keyWord);
+                $('#result').load('@Url.Action("EncryptXOR","Home")?text=' + text + "&keyWord=" + keyWord)
+            }
+        });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#decrypt').click(function (e) {
+            e.preventDefault();
+            var text = $('#text').val();
+            var keyWord = $('#keyWord').val();
+            if (keyWord.length != 3) {
+                alert('Input correct key, length not correct: ' + keyWord.length);
+            }
+            else {
+                text = encodeURIComponent(text);
+                keyWord = encodeURIComponent(keyWord);
+                $('#result').load('@Url.Action("DecryptXOR","Home")?text=' + text + "&keyWord=" + keyWord)
+            }
+        });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#send_en_file').click(function (e) {
+            e.preventDefault();
+            var keyWord = $('#keyWord').val();
+            keyWord = encodeURIComponent(keyWord);
+            var sqrt = Math.floor(Math.sqrt(keyWord.length));
+            if ($('#file').prop('files').length == 0) {
+                alert('Select file!');
+            }
+            else if (keyWord.length!=3) {
+                alert('Input correct key, length not correct: ' + keyWord.length);
+            }
+            else {
+                var file = $('#file').prop('files')[0];
+                var fileName = file.name;
+                fileName = encodeURIComponent(fileName);
+                var file_path = ('@Url.Action("UploadFileAndEncryptXOR", "Home")?fileName=' + fileName + "&keyWord=" + keyWord)
+                var data = new FormData;
+                data.append(fileName, file);
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadFile", "Home")',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (result) {
+                        if (result == 'Ok') {
+                            var a = document.createElement('A');
+                            a.href = file_path;
+                            a.download = file_path.substr(file_path.lastIndexOf('/') + 1);
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        }
+                    },
+                    error: function (xhr, status, p3) {
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+
+        });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#send_de_file').click(function (e) {
+            e.preventDefault();
+            var keyWord = $('#keyWord').val();
+            keyWord = encodeURIComponent(keyWord);
+            var sqrt = Math.floor(Math.sqrt(keyWord.length));
+            if ($('#file').prop('files').length == 0) {
+                alert('Select file!');
+            }
+            else if (keyWord.length!=3) {
+                alert('Input correct key, length not correct: ' + keyWord.length);
+            }
+            else {
+                var file = $('#file').prop('files')[0];
+                var fileName = file.name;
+                fileName = encodeURIComponent(fileName);
+                var file_path = ('@Url.Action("UploadFileAndDecryptXOR", "Home")?fileName=' + fileName + "&keyWord=" + keyWord)
+                var data = new FormData;
+                data.append(fileName, file);
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadFile", "Home")',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (result) {
+                        if (result == 'Ok') {
+                            var a = document.createElement('A');
+                            a.href = file_path;
+                            a.download = file_path.substr(file_path.lastIndexOf('/') + 1);
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        }
+                    },
+                    error: function (xhr, status, p3) {
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+
+        });
+    });
+    </script>
+
+</div>

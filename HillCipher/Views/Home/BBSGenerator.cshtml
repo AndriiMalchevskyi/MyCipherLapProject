@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewBag.Title = "BBSGenerator";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="position:center;">
+
+    <h2>BBS Generator</h2>
+    <hr />
+    <textarea id="text" rows="5" class="" style="width:100%;" placeholder="Text"></textarea>
+    <hr />
+    <textarea id="result" readonly rows="5" style="width:100%" placeholder="Decrypt text"></textarea>
+    <hr />
+    <input id="keyN" type="text" style="width:100%;" placeholder="Key" />
+    <hr />
+    <input type='button' class="btn btn-warning" style="width:100%;" id="encrypt" value='Encrypt' />
+    <hr />
+    <input type='button' class="btn btn-success" style="width:100%;" id="decrypt" value='Decrypt' />
+    <hr />
+
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#encrypt').click(function (e) {
+            e.preventDefault();
+            var text = $('#text').val();
+
+            text = encodeURIComponent(text);
+            $('#result').load('@Url.Action("EncryptBBS","Home")?text=' + text)
+
+        });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#decrypt').click(function (e) {
+            e.preventDefault();
+            var text = $('#text').val();
+            var keyN = $('#keyN').val();
+
+            text = encodeURIComponent(text);
+            keyWord = encodeURIComponent(keyN);
+            $('#result').load('@Url.Action("DecryptBBS","Home")?text=' + text + "&n=" + keyN)
+        });
+    });
+    </script>
+</div>

@@ -1,0 +1,1 @@
+Hill cipher, bad key world(lenght=0)
